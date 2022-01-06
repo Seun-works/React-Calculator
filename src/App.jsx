@@ -17,6 +17,7 @@ export const ACTIONS = {
 //This is a reducer which gives each button in the calculator its functionality
 const reducer = (state, {type, payload}) => {
   switch(type) {
+    //This gives the calculator the digit adding functionality
     case ACTIONS.ADD_DIGIT:
       if(state.overwrite) {
         return {
@@ -35,11 +36,14 @@ const reducer = (state, {type, payload}) => {
         currentOperand: `${state.currentOperand || ""}${payload.digit}`,
       }
       
+    //This allows the calculator to clear all the output   
     case ACTIONS.CLEAR: 
      return {
        
      }  
+    
 
+    //This allows the calculator to remove either one digit or a whole compouted value 
     case ACTIONS.DELETE_DIGIT:
       if(state.overwrite) {
         return {
@@ -63,6 +67,7 @@ const reducer = (state, {type, payload}) => {
 
       }
 
+    //This allows the calculator to choose any operation of our choice  
      case ACTIONS.CHOOSE_OPERATION:
        if(state.currentOperand == null && state.previousOperand == null) {
          return state
@@ -90,6 +95,8 @@ const reducer = (state, {type, payload}) => {
          operation: payload.operation
        }
 
+
+      //This gives the calculator its true functioanlity, which is to calculate whatever we want to do 
       case ACTIONS.EVALUATE: 
        if(state.operation == null || state.currentOperand == null || state.previousOperand == null) {
          return state
