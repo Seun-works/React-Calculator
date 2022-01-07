@@ -27,7 +27,7 @@ Users should be able to:
 
 ### Links
 
-- Live Site URL: [The Anime Database](https://kind-clarke-42ccaa.netlify.app)
+- Live Site URL: [React Calculator](hhttps://seun-works.github.io/React-Calculator/)
 
 ## My process
 
