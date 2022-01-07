@@ -1,70 +1,157 @@
-# Getting Started with Create React App
+# A React Calculator
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+![](./reactCalculator.png)
 
-In the project directory, you can run:
 
-### `npm start`
+## Table of contents
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- [Overview](#overview)
+  - [The challenge](#the-challenge)
+  - [Links](#links)
+- [My process](#my-process)
+  - [Built with](#built-with)
+  - [What I learned](#what-i-learned)
+- [Author](#author)
+- [Acknowledgments](#acknowledgments)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Overview
 
-### `npm test`
+### The challenge
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Users should be able to:
 
-### `npm run build`
+- Use a functioning calculator that calculates all their arithmetic operations
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Links
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Live Site URL: [The Anime Database](https://kind-clarke-42ccaa.netlify.app)
 
-### `npm run eject`
+## My process
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+My thinking process in building this react calculator couldve been made easier if i had relied on a third party library to aid in my calculators computation ability. However, i felt that it was necessary to learn how to create the computational operations from scratch by using the react hook useReducer.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Built with
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- React Components.
+- React hooks.
+- [React](https://reactjs.org/) - JS library
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### What I learned
 
-## Learn More
+Building the look of the calculator was relatively easy as that just needed a level of competence from my continuous practice with react. However, the real hurdle came from 
+creating the calculator operations from scratch. Like a normal calculator, there are four actions that a calculator should be able to acheive in its computation. These are, adding digits, choosing an operation to be done on these digits, clearing the computated values, deleting each digit from the screen, and evaluating the digits.
+I achieved this by making use of the react hook Use reducer, i could have chosen to just use state but using a reducer allows me to be more productive with my time, and it allows
+me to manage states that are dependent on other states.
+Kindly find a snippet of the reducer down below.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```js
+//This is a reducer which gives each button in the calculator its functionality
+const reducer = (state, {type, payload}) => {
+  switch(type) {
+    //This gives the calculator the digit adding functionality
+    case ACTIONS.ADD_DIGIT:
+      if(state.overwrite) {
+        return {
+          ...state,
+          currentOperand: payload.digit,
+          overwrite: false
+        }
+      }
+      
+      if(payload.digit === '0' && state.currentOperand === '0') {
+        return state}
+      if(payload.digit === '.' && state.currentOperand.includes(".")) {
+        return state }
+      return {
+        ...state,
+        currentOperand: `${state.currentOperand || ""}${payload.digit}`,
+      }
+      
+    //This allows the calculator to clear all the output   
+    case ACTIONS.CLEAR: 
+     return {
+       
+     }  
+    
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+    //This allows the calculator to remove either one digit or a whole compouted value 
+    case ACTIONS.DELETE_DIGIT:
+      if(state.overwrite) {
+        return {
+          ...state,
+          overwrite: false,
+          currentOperand: null
+        }
+      }
+      if(state.currentOperand == null) {
+        return state
+      }
+      if(state.currentOperand.length === 1 ) {
+        return {
+          ...state,
+          currentOperand: null
+        }
+      }
+      return {
+        ...state,
+        currentOperand: state.currentOperand.slice(0, -1)
 
-### Code Splitting
+      }
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+    //This allows the calculator to choose any operation of our choice  
+     case ACTIONS.CHOOSE_OPERATION:
+       if(state.currentOperand == null && state.previousOperand == null) {
+         return state
+       }
 
-### Analyzing the Bundle Size
+       if(state.currentOperand == null) {
+         return {
+           ...state,
+           operation: payload.operation
+         }
+       }
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+       if(state.previousOperand == null) {
+         return{
+          ...state,
+          operation: payload.operation,
+          previousOperand: state.currentOperand,
+          currentOperand: null
+         }
+       }
+       return {
+         ...state,
+         previousOperand: evaluate(state),
+         currentOperand: null,
+         operation: payload.operation
+       }
 
-### Making a Progressive Web App
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+      //This gives the calculator its true functioanlity, which is to calculate whatever we want to do 
+      case ACTIONS.EVALUATE: 
+       if(state.operation == null || state.currentOperand == null || state.previousOperand == null) {
+         return state
+       }
+       return {
+         ...state,
+         overwrite: true,
+         previousOperand: null,
+         currentOperand: evaluate(state),
+         operation: null
+       }
+  }
+}
+```
 
-### Advanced Configuration
+## Author
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- Website - [Seun Ogundipe](https://frosty-dubinsky-40fb7f.netlify.app)
 
-### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-### `npm run build` fails to minify
+## Acknowledgments
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+I want to give thanks to Web dev simplified, for being the inspiration to this project, as I did not have to reinvent the wheel in the execution of this project.
